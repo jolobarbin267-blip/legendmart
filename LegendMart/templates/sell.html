@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Sell Account - LegendMart{% endblock %}
+
+{% block content %}
+<section class="auth-section" style="max-width:800px;">
+  <div class="auth-card">
+    <h2 class="auth-title">Upload an Account for Sale</h2>
+    <p class="auth-sub">After submission, an admin will review and approve your listing before it goes live.</p>
+
+    <form method="POST" action="{{ url_for('sell') }}" enctype="multipart/form-data" class="auth-form">
+      <div class="form-group">
+        <label>Title * <span style="color:var(--muted);font-weight:400">(e.g. "Mythic Account with 150 skins")</span></label>
+        <input type="text" name="title" required placeholder="Enter a catchy title">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Rank *</label>
+          <select name="rank" required>
+            <option value="">-- Select rank --</option>
+            {% for r in ranks %}<option value="{{ r }}">{{ r }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Number of Skins</label>
+          <input type="number" name="skin_count" min="0" value="0">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Price (PHP) *</label>
+        <input type="number" step="0.01" min="1" name="price" required placeholder="500">
+      </div>
+
+      <div class="form-group">
+        <label>Description / Other details</label>
+        <textarea name="description" rows="4" placeholder="Heroes, emblems, battle points, diamonds, etc."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Upload photos (max 5, png/jpg)</label>
+        <input type="file" name="images" multiple accept="image/*" class="file-input">
+        <small style="color:var(--muted)">You can select multiple images at once.</small>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Submit for Approval</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

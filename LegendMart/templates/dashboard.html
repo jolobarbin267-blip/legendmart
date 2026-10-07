@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - LegendMart{% endblock %}
+
+{% block content %}
+<section class="dashboard-section">
+  <h1 class="dashboard-title">Welcome, {{ user.fullname }}!</h1>
+  <p class="dashboard-sub">This is your seller dashboard.</p>
+
+  <div class="dashboard-grid">
+    <!-- Profile -->
+    <div class="dash-card">
+      <h3>Your Information</h3>
+      <div class="info-row"><span>Email:</span> <strong>{{ user.email }}</strong></div>
+      <div class="info-row"><span>Address:</span> <strong>{{ user.address }}</strong></div>
+      <div class="info-row"><span>ID Type:</span> <strong>{{ user.id_type }}</strong></div>
+      <div class="info-row"><span>ID Number:</span> <strong>{{ user.id_number }}</strong></div>
+      {% if user.id_image %}
+        <div class="info-row"><span>ID Picture:</span> <strong>Uploaded</strong></div>
+        <img src="{{ url_for('static', filename='uploads/' + user.id_image) }}" class="id-preview" alt="ID">
+      {% else %}
+        <div class="info-row"><span>ID Picture:</span> <strong style="color:#ff6b6b">None</strong></div>
+      {% endif %}
+    </div>
+
+    <!-- Payment Methods -->
+    <div class="dash-card">
+      <h3>Your Payment Methods</h3>
+      <div class="info-row"><span>GCash:</span> <strong>{{ user.gcash or '—' }}</strong></div>
+      <div class="info-row"><span>Maya:</span> <strong>{{ user.maya or '—' }}</strong></div>
+      <div class="info-row"><span>PayPal:</span> <strong>{{ user.paypal or '—' }}</strong></div>
+      <p class="dash-note">Buyers pay directly to these accounts.</p>
+      <a href="{{ url_for('sell') }}" class="btn btn-primary btn-block" style="margin-top:1rem;text-align:center;">+ Upload an Account</a>
+    </div>
+
+    <!-- My Listings -->
+    <div class="dash-card dash-card-wide">
+      <h3>Your Listings ({{ listings|length }})</h3>
+      {% if listings %}
+        <div class="my-listings">
+          {% for l in listings %}
+          <div class="my-listing-row">
+            <div class="ml-thumb">
+              {% if l.cover_image %}
+              <img src="{{ url_for('static', filename='uploads/' + l.cover_image) }}">
+              {% else %}
+              <span>&#127918;</span>
+              {% endif %}
+            </div>
+            <div class="ml-info">
+              <strong>{{ l.title }}</strong>
+              <div class="ml-meta">{{ l.rank }} &bull; {{ l.skin_count }} skins &bull; &#8369;{{ "%.2f"|format(l.price) }}</div>
+              <span class="status-badge status-{{ l.status_badge[1] }}">{{ l.status_badge[0] }}</span>
+              {% if l.status == 'pending' %}
+              <small style="color:var(--muted);margin-left:0.5rem;">Waiting for admin approval</small>
+              {% elif l.status == 'declined' %}
+              <small style="color:#ff8a8a;margin-left:0.5rem;">Declined by admin — edit and re-submit</small>
+              {% endif %}
+            </div>
+            <div class="ml-actions">
+              <a href="{{ url_for('account_detail', listing_id=l.id) }}" class="btn btn-outline btn-sm">View</a>
+              <a href="{{ url_for('edit_listing', listing_id=l.id) }}" class="btn btn-outline btn-sm">Edit</a>
+              <form method="POST" action="{{ url_for('delete_listing', listing_id=l.id) }}" onsubmit="return confirm('Delete this listing?');" style="display:inline;">
+                <button type="submit" class="btn btn-delete btn-sm">Delete</button>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state empty-small">
+          <p>You haven't uploaded any account yet.</p>
+          <a href="{{ url_for('sell') }}" class="btn btn-primary">+ Upload an Account</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
